@@ -1,0 +1,17 @@
+/* frontend/src/index.css */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+}
+
+.btn {
+  margin-top: 10px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.my-4 {
+  margin: 1.5rem 0;
+}
