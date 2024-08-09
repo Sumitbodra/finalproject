@@ -1,6 +1,8 @@
 // frontend/src/components/Cart.js
 import React from "react";
 import { useCart } from "../contexts/CartContext";
+import { useNavigate } from "react-router-dom";
+
 import {
   Table,
   TableBody,
@@ -19,6 +21,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const Cart = () => {
+  const navigate = useNavigate();
   const { cartItems, removeFromCart, updateQuantity, clearCart, getCartTotal } =
     useCart();
 
@@ -111,8 +114,12 @@ const Cart = () => {
           >
             Clear Cart
           </Button>
-          <Button variant="contained" color="primary">
-            Checkout
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate("/checkout")}
+          >
+            Proceed to Checkout
           </Button>
         </Box>
       </Box>

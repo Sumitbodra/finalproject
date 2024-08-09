@@ -7,6 +7,8 @@ import ProductDetails from "./components/ProductDetails";
 import Cart from "./components/Cart";
 import Categories from "./components/Categories";
 import { CartProvider } from "./contexts/CartContext";
+import Checkout from "./components/Checkout";
+import OrderSummary from "./components/OrderSummary";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
           <Route path="/category/:categoryName" element={<ProductList />} />
           <Route path="/products/:id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-summary" element={<OrderSummary />} />
         </Routes>
       </Router>
     </CartProvider>
