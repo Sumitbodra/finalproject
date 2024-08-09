@@ -1,6 +1,8 @@
 // frontend/src/components/ProductDetails.js
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+
+import { useParams, useNavigate } from "react-router-dom";
+
 import {
   Button,
   Card,
@@ -14,6 +16,7 @@ const ProductDetails = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const { addToCart } = useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`http://localhost:4000/api/products/${id}`)
@@ -31,7 +34,7 @@ const ProductDetails = () => {
       <CardMedia
         component="img"
         height="300"
-        image={product.image}
+        image={product.imageUrl}
         alt={product.name}
       />
       <CardContent>
@@ -47,7 +50,10 @@ const ProductDetails = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => addToCart({ ...product, quantity: 1 })}
+          onClick={() => {
+            addToCart({ ...product, quantity: 1 });
+            navigate("/cart"); // Redirect to the cart page
+          }}
         >
           Add to Cart
         </Button>

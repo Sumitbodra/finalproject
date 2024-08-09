@@ -11,7 +11,7 @@ const PORT = 4000 || 5000;
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/products", productRoutes);
+app.use("/api", productRoutes);
 
 mongoose
   .connect(

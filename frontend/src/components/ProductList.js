@@ -1,17 +1,23 @@
 // frontend/src/components/ProductList.js
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardMedia, Typography, Grid } from "@mui/material";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
+  const { categoryName } = useParams();
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/products")
+    const url = categoryName
+      ? `http://localhost:4000/api/products/category/${categoryName}`
+      : "http://localhost:4000/api/products";
+
+    fetch(url)
       .then((response) => response.json())
       .then((data) => setProducts(data))
       .catch((error) => console.error("Error fetching products:", error));
-  }, []);
+  }, [categoryName]);
 
   return (
     <Grid container spacing={4}>
@@ -21,7 +27,7 @@ const ProductList = () => {
             <CardMedia
               component="img"
               height="140"
-              image={product.image}
+              image={product.imageUrl}
               alt={product.name}
             />
             <CardContent>

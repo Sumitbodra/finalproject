@@ -2,69 +2,121 @@
 import React from "react";
 import { useCart } from "../contexts/CartContext";
 import {
-  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
   Typography,
-  List,
-  ListItem,
-  ListItemText,
+  Button,
   IconButton,
+  Box,
 } from "@mui/material";
-import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const Cart = () => {
-  const { cartItems, removeFromCart, adjustQuantity } = useCart();
+  const { cartItems, removeFromCart, updateQuantity, clearCart, getCartTotal } =
+    useCart();
+
+  if (cartItems.length === 0) {
+    return (
+      <Box sx={{ textAlign: "center", mt: 4 }}>
+        <Typography variant="h5">Your cart is empty</Typography>
+      </Box>
+    );
+  }
 
   return (
-    <div>
-      <Typography variant="h4" gutterBottom>
-        Shopping Cart
+    <Box sx={{ maxWidth: 800, margin: "auto", mt: 4 }}>
+      <Typography variant="h4" sx={{ mb: 2 }}>
+        Your Cart
       </Typography>
-      <List>
-        {cartItems.map((item) => (
-          <ListItem
-            key={item._id}
-            secondaryAction={
-              <>
-                <IconButton
-                  edge="end"
-                  aria-label="decrease"
-                  onClick={() => adjustQuantity(item._id, item.quantity - 1)}
-                >
-                  <RemoveCircleIcon />
-                </IconButton>
-                <IconButton
-                  edge="end"
-                  aria-label="increase"
-                  onClick={() => adjustQuantity(item._id, item.quantity + 1)}
-                >
-                  <AddCircleIcon />
-                </IconButton>
-              </>
-            }
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Product</TableCell>
+              <TableCell align="right">Price</TableCell>
+              <TableCell align="center">Quantity</TableCell>
+              <TableCell align="right">Total</TableCell>
+              <TableCell align="center">Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {cartItems.map((item) => (
+              <TableRow key={item._id}>
+                <TableCell component="th" scope="row">
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <img
+                      src={item.imageUrl}
+                      alt={item.name}
+                      style={{ width: 50, marginRight: 10 }}
+                    />
+                    {item.name}
+                  </Box>
+                </TableCell>
+                <TableCell align="right">${item.price.toFixed(2)}</TableCell>
+                <TableCell align="center">
+                  <IconButton
+                    onClick={() =>
+                      updateQuantity(item._id, Math.max(1, item.quantity - 1))
+                    }
+                  >
+                    <RemoveIcon />
+                  </IconButton>
+                  {item.quantity}
+                  <IconButton
+                    onClick={() => updateQuantity(item._id, item.quantity + 1)}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                </TableCell>
+                <TableCell align="right">
+                  ${(item.price * item.quantity).toFixed(2)}
+                </TableCell>
+                <TableCell align="center">
+                  <IconButton
+                    onClick={() => removeFromCart(item._id)}
+                    color="error"
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Box
+        sx={{
+          mt: 2,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h6">
+          Total: ${getCartTotal().toFixed(2)}
+        </Typography>
+        <Box>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={clearCart}
+            sx={{ mr: 1 }}
           >
-            <ListItemText
-              primary={item.name}
-              secondary={`$${item.price} x ${item.quantity}`}
-            />
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={() => removeFromCart(item._id)}
-            >
-              Remove
-            </Button>
-          </ListItem>
-        ))}
-      </List>
-      <Typography variant="h6" gutterBottom>
-        Total: $
-        {cartItems.reduce(
-          (total, item) => total + item.price * item.quantity,
-          0
-        )}
-      </Typography>
-    </div>
+            Clear Cart
+          </Button>
+          <Button variant="contained" color="primary">
+            Checkout
+          </Button>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

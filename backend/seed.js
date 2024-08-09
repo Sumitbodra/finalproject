@@ -1,68 +1,90 @@
+// backend/seed.js
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
+const Category = require("./models/Category");
 const Product = require("./models/Product");
 
-dotenv.config();
+mongoose.connect(
+  "mongodb+srv://bodarasumit007:admin123@cluster0.dmdjebc.mongodb.net/",
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+);
 
-mongoose
-  .connect(
-    "mongodb+srv://bodarasumit007:admin123@cluster0.dmdjebc.mongodb.net/",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
-  )
-  .then(() => {
-    console.log("MongoDB connected");
-    seedData();
-  })
-  .catch((err) => console.error(err));
+const categories = [
+  { name: "Sneakers", description: "Athletic and casual sneakers" },
+  { name: "Running Shoes", description: "High-performance running shoes" },
+  { name: "Basketball Shoes", description: "Shoes designed for basketball" },
+];
 
-const seedData = async () => {
-  const products = [
-    {
-      name: "Running Shoes",
-      description: "Comfortable running shoes for everyday use.",
-      price: 59.99,
-      category: "Running",
-      imageUrl: "https://example.com/running-shoes.jpg",
-    },
-    {
-      name: "Basketball Shoes",
-      description: "High-performance shoes for basketball players.",
-      price: 89.99,
-      category: "Basketball",
-      imageUrl: "https://example.com/basketball-shoes.jpg",
-    },
-    {
-      name: "Casual Sneakers",
-      description: "Stylish and comfortable casual sneakers.",
-      price: 49.99,
-      category: "Casual",
-      imageUrl: "https://example.com/casual-sneakers.jpg",
-    },
-    {
-      name: "Hiking Boots",
-      description: "Durable boots for hiking and outdoor adventures.",
-      price: 109.99,
-      category: "Hiking",
-      imageUrl: "https://example.com/hiking-boots.jpg",
-    },
-    {
-      name: "Formal Shoes",
-      description: "Elegant shoes perfect for formal occasions.",
-      price: 79.99,
-      category: "Formal",
-      imageUrl: "https://example.com/formal-shoes.jpg",
-    },
-  ];
+const products = [
+  {
+    name: "Air Jordan 1",
+    description: "Classic basketball sneaker",
+    price: 170,
+    category: "Sneakers",
+    imageUrl: "https://example.com/air-jordan-1.jpg",
+  },
+  {
+    name: "Nike Air Max 90",
+    description: "Iconic casual sneaker",
+    price: 120,
+    category: "Sneakers",
+    imageUrl: "https://example.com/air-max-90.jpg",
+  },
+  {
+    name: "Brooks Ghost 13",
+    description: "Comfortable neutral running shoe",
+    price: 130,
+    category: "Running Shoes",
+    imageUrl: "https://example.com/brooks-ghost-13.jpg",
+  },
+  {
+    name: "Asics Gel-Nimbus 23",
+    description: "Premium cushioned running shoe",
+    price: 150,
+    category: "Running Shoes",
+    imageUrl: "https://example.com/asics-gel-nimbus-23.jpg",
+  },
+  {
+    name: "Nike Kyrie 7",
+    description: "Signature basketball shoe",
+    price: 130,
+    category: "Basketball Shoes",
+    imageUrl: "https://example.com/nike-kyrie-7.jpg",
+  },
+  {
+    name: "Under Armour Curry 8",
+    description: "High-performance basketball shoe",
+    price: 160,
+    category: "Basketball Shoes",
+    imageUrl: "https://example.com/ua-curry-8.jpg",
+  },
+];
 
+const seedDatabase = async () => {
   try {
+    await Category.deleteMany({});
     await Product.deleteMany({});
-    await Product.insertMany(products);
-    console.log("Data seeded successfully");
+
+    const createdCategories = await Category.insertMany(categories);
+    console.log("Categories seeded successfully");
+
+    const productsWithCategoryIds = products.map((product) => {
+      const category = createdCategories.find(
+        (cat) => cat.name === product.category
+      );
+      return { ...product, category: category._id };
+    });
+
+    await Product.insertMany(productsWithCategoryIds);
+    console.log("Products seeded successfully");
+
     mongoose.connection.close();
   } catch (error) {
-    console.error("Error seeding data:", error);
+    console.error("Error seeding database:", error);
+    mongoose.connection.close();
   }
 };
+
+seedDatabase();
